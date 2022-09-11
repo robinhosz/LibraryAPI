@@ -7,6 +7,7 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 
 //Classe de configuração do dozermapper, estou usando duas formas de mapper nesse projeto.
+// Não estou utilizando no projeto, apenas deixei aqui para estudos de sua configuração
 
 public class DozerMapper {
 	
