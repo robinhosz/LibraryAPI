@@ -1,10 +1,5 @@
 package com.robson.biblioteca.service;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +11,10 @@ import com.robson.biblioteca.dto.AutorDTO;
 import com.robson.biblioteca.exception.DataIntegrityViolationException;
 import com.robson.biblioteca.exception.ObjectNotFoundException;
 import com.robson.biblioteca.model.Autor;
+import com.robson.biblioteca.model.Endereco;
 import com.robson.biblioteca.model.Pessoa;
 import com.robson.biblioteca.repository.AutorRepository;
+import com.robson.biblioteca.repository.EnderecoRepository;
 import com.robson.biblioteca.repository.PessoaRepository;
 
 @Service
@@ -28,6 +25,12 @@ public class AutorService {
 	
 	@Autowired
 	private PessoaRepository pessoaRepository;
+	
+	@Autowired
+	private ViaCepService viaCepService;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -39,11 +42,12 @@ public class AutorService {
 
 	public Autor findById(Integer id) {
 		Optional<Autor> obj = repository.findById(id);
-		return obj.orElse(null);
+		return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto com a id: " + id + " não encontrado"));
 	}
 
 	public Autor save(AutorDTO obj) {
 		findByCpf(obj);
+		salvarAutorComCep(obj);
 		return repository.save(mapper.map(obj, Autor.class));
 	}
 	
@@ -52,6 +56,7 @@ public class AutorService {
 	           throw new ObjectNotFoundException("ID: " + obj.getIdPessoa() + " não foi encontrado!");
 	        }	
 		findByCpf(obj);
+		salvarAutorComCep(obj);
 		return repository.save(mapper.map(obj, Autor.class));
 	}
 	
@@ -69,21 +74,17 @@ public class AutorService {
 
 		}
 	}
-
-	public String findAddressByCep(String cep) {
-		String json;
-		try {
-			URL url = new URL("http://viacep.com.br/ws/" + cep + "/json");
-			URLConnection urlConnection = url.openConnection();
-			InputStream is = urlConnection.getInputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			StringBuilder jsonSb = new StringBuilder();
-			br.lines().forEach(l -> jsonSb.append(l.trim()));
-			json = jsonSb.toString();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return json;
+	
+	private void salvarAutorComCep(AutorDTO autor) {
+		// Verificar se o Endereco do Autor já existe (pelo CEP).
+		String cep = autor.getEndereco().getCep();
+		Endereco endereco = enderecoRepository.findById(cep).orElseGet(() -> {
+			// Caso não exista, integrar com o ViaCEP e persistir o retorno.
+			Endereco novoEndereco = viaCepService.consultarCep(cep);
+			enderecoRepository.save(novoEndereco);
+			return novoEndereco;
+		});
+		autor.setEndereco(endereco);
 	}
 
 }

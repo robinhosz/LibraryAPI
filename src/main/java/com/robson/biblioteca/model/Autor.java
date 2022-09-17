@@ -31,5 +31,9 @@ public class Autor extends Pessoa {
 		this.livros = livros;
 	}
 	
+	public Autor(Integer idPessoa, String nome, Integer idade, String cpf, Endereco endereco) {
+		super(idPessoa, nome, idade, cpf, endereco);
+	}
+	
 	
 }
