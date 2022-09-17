@@ -29,6 +29,8 @@ public class LivroDTO extends RepresentationModel<LivroDTO> implements Serializa
 	private String descricao;
 	@Enumerated(EnumType.STRING)
 	private GeneroEnum genero;
+	private Integer quantidade;
+	private Double preco;
 
 	private Integer autor;
 	
@@ -37,6 +39,8 @@ public class LivroDTO extends RepresentationModel<LivroDTO> implements Serializa
 		this.titulo = obj.getTitulo();
 		this.descricao = obj.getDescricao();
 		this.genero = obj.getGenero();
+		this.quantidade = obj.getQuantidade();
+		this.preco = obj.getPreco();
 		this.autor = obj.getAutor().getIdPessoa();
 	}
 
