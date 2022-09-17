@@ -26,4 +26,11 @@ public class Cliente extends Pessoa {
 	
 	@OneToMany
 	private List<Livro> livros = new ArrayList<>();
+
+	public Cliente(Integer idPessoa, String nome, Integer idade, String cpf, Endereco endereco, List<Livro> livros) {
+		super(idPessoa, nome, idade, cpf, endereco);
+		this.livros = livros;
+	}
+	
+	
 }

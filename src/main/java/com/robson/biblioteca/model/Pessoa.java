@@ -2,7 +2,6 @@ package com.robson.biblioteca.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +31,7 @@ public abstract class Pessoa implements Serializable {
 	private String nome;
 	private Integer idade;
 	private String cpf;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	private Endereco endereco;
 
 }

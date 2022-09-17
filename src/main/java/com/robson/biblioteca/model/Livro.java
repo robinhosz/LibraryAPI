@@ -35,6 +35,8 @@ public class Livro implements Serializable{
 	private String descricao;
 	@Enumerated(EnumType.STRING)
 	private GeneroEnum genero;
+	private Integer quantidade;
+	private Double preco;
 	
 	@ManyToOne
 	@JoinColumn(name = "autor_id")
